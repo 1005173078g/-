@@ -1,87 +1,89 @@
-# News Lianbo WeCom Daily Brief Design
+# 《新闻联播》企业微信日报自动化设计
 
-## Goal
+## 目标
 
-Every day after Xinwen Lianbo has aired and the official source is reasonably available, generate a mobile-friendly HTML brief and send its GitHub Pages link to the user's WeCom group.
+每天《新闻联播》播出后，在官方内容基本稳定可获取时，自动生成一份适合手机浏览的 HTML 摘要页，并把 GitHub Pages 网页链接发送到用户的企业微信群。
 
-The brief should follow the user's reference format:
+摘要页参考用户提供的图文格式：
 
-- A short opening sentence that states how many market-relevant mainlines were extracted.
-- One card per mainline, using `消息面`, `逻辑`, and `观察`.
-- A final `观察顺序`, `跟踪要点`, and `边际信号` section.
+- 开头用一句话说明当天提炼出多少条主线。
+- 每条主线做成一张卡片。
+- 每张卡片包含 `消息面`、`逻辑`、`观察`。
+- 底部包含 `观察顺序`、`跟踪要点`、`边际信号`。
 
-The number of mainlines is dynamic. The system summarizes however many clear mainlines appear in that day's program; it does not force exactly six.
+主线数量不固定。当天《新闻联播》中能提炼出几条清晰的产业、政策、资金关注主线，就总结几条，不硬凑 6 条。
 
-## Inputs
+## 输入
 
-- Primary news source: official CCTV/CCTV.com Xinwen Lianbo text or video page.
-- Scheduled run time: 21:30 Beijing time every day.
-- WeCom delivery: group robot webhook supplied by the user.
-- Web publishing target: GitHub Pages for `https://github.com/1005173078g/-.git`.
+- 新闻来源：央视网/CCTV 官方《新闻联播》文字稿或视频页面。
+- 定时运行：每天北京时间 21:30。
+- 企业微信发送：用户提供的企业微信群机器人 Webhook。
+- 网页托管：`https://github.com/1005173078g/-.git` 对应的 GitHub Pages。
 
-## Output
+## 输出
 
-For each date, the workflow produces:
+每天生成：
 
-- A static HTML page named by date, for example `2026-07-09.html`.
-- A WeCom markdown message containing:
-  - Date and title.
-  - Extracted mainline count.
-  - Observation order.
-  - GitHub Pages URL.
+- 一个按日期命名的静态 HTML 页面，例如 `2026-07-09.html`。
+- 一条企业微信 markdown 消息，包含：
+  - 日期和标题。
+  - 当天提炼出的主线数量。
+  - 观察顺序。
+  - GitHub Pages 网页链接。
 
-The HTML is optimized for phone reading. It uses a concise card layout similar to the provided screenshots, with readable Chinese typography, soft section colors, and no reliance on JavaScript.
+HTML 页面优先适配手机阅读。页面采用类似参考图的卡片式排版，中文字体清晰，颜色克制柔和，不依赖 JavaScript。
 
-## Content Rules
+## 内容规则
 
-Each mainline should be derived from the day's Xinwen Lianbo content and converted into a market observation chain:
+每条主线都应来自当天《新闻联播》的实际内容，并转换为一条“新闻信号 → 产业逻辑 → 观察标的”的链路：
 
-1. `消息面`: What happened in the broadcast.
-2. `逻辑`: Why it matters for policy direction, industry trend, or capital attention.
-3. `观察`: Up to three relevant A-share or Hong Kong-listed companies when a reasonably direct mapping exists.
+1. `消息面`：当天播出内容里发生了什么。
+2. `逻辑`：为什么它对应政策方向、产业趋势或资金关注度。
+3. `观察`：如果有较直接映射，列出最多 3 个 A 股或港股相关公司。
 
-The workflow should avoid pretending every news item has a tradable mapping. If a segment is politically or diplomatically important but not useful as an industry observation, it can be summarized in narrative form or excluded from the market-mainline list.
+系统不应把所有新闻都强行解释成可交易方向。如果某条内容主要是政治、外交或宏观表态，且没有清晰产业映射，可以只作为叙述性信息处理，或不纳入市场主线。
 
-Investment language stays conservative:
+投资相关表达保持克制：
 
-- Use `观察`, not `推荐`, `买入`, or `确定性机会`.
-- Include a short disclaimer that the page is an information summary, not investment advice.
-- Prefer liquid, recognizable leaders or direct beneficiaries over obscure targets.
+- 使用 `观察`，不使用 `推荐`、`买入`、`确定性机会`。
+- 页面底部加入简短免责声明：内容仅为信息整理和学习观察，不构成投资建议。
+- 标的优先选择流动性较好、辨识度较高、与主线关系直接的公司。
 
-## Publishing Flow
+## 发布流程
 
-1. Fetch official Xinwen Lianbo source after 21:30.
-2. Extract and summarize the day's program.
-3. Generate structured JSON for the brief.
-4. Render the JSON into a static HTML file.
-5. Commit and push the HTML to the GitHub Pages repository.
-6. Send the public page URL to the WeCom robot.
+1. 每天 21:30 后获取央视官方《新闻联播》内容。
+2. 提取当天节目要点。
+3. 生成结构化摘要数据。
+4. 把结构化数据渲染成静态 HTML 页面。
+5. 提交并推送到 GitHub Pages 仓库。
+6. 将公开网页链接发送到企业微信群机器人。
 
-## Failure Handling
+## 异常处理
 
-If the official source is not available:
+如果官方来源暂时不可用：
 
-- Retry during the run if practical.
-- If still unavailable, send a WeCom notice saying the official source is not yet available and no summary was published.
+- 在当次运行中尽量重试。
+- 如果仍不可用，向企业微信群发送提示：官方内容暂未稳定发布，本次未生成日报。
 
-If GitHub publishing fails:
+如果 GitHub 发布失败：
 
-- Keep the generated HTML locally in `outputs`.
-- Send a WeCom notice that generation succeeded but publishing failed.
+- 将生成好的 HTML 保存在本地 `outputs` 目录。
+- 向企业微信群发送提示：日报已生成，但发布网页失败。
 
-If WeCom sending fails:
+如果企业微信发送失败：
 
-- Leave the generated and published HTML intact.
-- Record the failure in the run output so it can be retried manually.
+- 已生成和已发布的 HTML 保持不变。
+- 在运行结果中记录失败原因，便于手动重试。
 
-## Configuration
+## 配置规则
 
-Sensitive values should not be committed into the public repository. The WeCom webhook should be stored in automation configuration or environment variables.
+敏感信息不提交到公开仓库。
 
-The repository URL and GitHub Pages base URL can be non-secret configuration.
+- 企业微信 Webhook 应放在自动化配置或环境变量中。
+- GitHub 仓库地址、GitHub Pages 基础地址可以作为非敏感配置保存。
 
-## Open Implementation Decisions
+## 实现前需要验证
 
-- Whether GitHub Pages is already enabled for the repository or must be enabled once in GitHub settings.
-- Whether the automation environment already has credentials that can push to `1005173078g/-.git`.
-- The exact official CCTV page parsing route may need verification during implementation because CCTV page structure can change.
+- GitHub Pages 是否已为该仓库开启。
+- 自动化运行环境是否具备推送 `1005173078g/-.git` 的权限。
+- 央视官方页面的结构和可抓取路径，因为央视网页结构可能变化。
