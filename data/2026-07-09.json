@@ -1,0 +1,19 @@
+{
+  "date": "2026-07-09",
+  "title": "2026年7月9日《新闻联播》产业观察",
+  "source_url": "https://tv.cctv.com/",
+  "opening": "今天主线提炼成1条，用于验证页面生成流程。",
+  "mainlines": [
+    {
+      "name": "电子信息",
+      "tag": "高端制造",
+      "news": "电子信息制造业保持增长。",
+      "logic": "利好AI硬件、电子制造、PCB链条等方向。",
+      "watch": ["工业富联", "立讯精密", "沪电股份"]
+    }
+  ],
+  "observation_order": ["电子信息"],
+  "tracking_points": ["订单兑现", "估值位置", "现金流质量"],
+  "marginal_signals": ["极端高温"],
+  "disclaimer": "内容仅为信息整理和学习观察，不构成投资建议。"
+}
