@@ -9,6 +9,10 @@ from .render import write_html
 from .wecom import build_markdown_payload, send_wecom_markdown
 
 
+def build_page_url(pages_base_url: str, page_path: Path) -> str:
+    return pages_base_url.rstrip("/") + "/" + page_path.as_posix()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="生成《新闻联播》产业观察日报")
     parser.add_argument("--date", required=True, help="日期，例如 2026-07-09")
@@ -21,7 +25,7 @@ def main() -> None:
     data_path = Path(args.data_dir) / f"{args.date}.json"
     brief = Brief.load(data_path)
     page_path = write_html(brief, args.daily_dir)
-    page_url = args.pages_base_url.rstrip("/") + "/" + page_path.as_posix()
+    page_url = build_page_url(args.pages_base_url, page_path)
 
     print(f"已生成：{page_path}")
     print(f"网页链接：{page_url}")
