@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
   daily:
@@ -46,6 +48,17 @@ jobs:
             git commit -m "生成${{ steps.date.outputs.today }}新闻联播日报"
             git push
           fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy Pages
+        uses: actions/deploy-pages@v4
 
       - name: Send WeCom success message
         run: python -m src.news_lianbo_daily.cli --date "${{ steps.date.outputs.today }}" --send-wecom
