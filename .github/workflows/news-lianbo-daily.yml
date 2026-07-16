@@ -2,7 +2,7 @@ name: news-lianbo-wecom-daily
 
 on:
   schedule:
-    - cron: "30 13 * * *"
+    - cron: "40 13 * * *"
   workflow_dispatch:
 
 permissions:
